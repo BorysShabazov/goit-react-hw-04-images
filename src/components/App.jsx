@@ -48,7 +48,7 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, [query, page]);
+  }, [query, page, setImages, setTotal, setStatus]);
 
   // useEffect(() => {
 
