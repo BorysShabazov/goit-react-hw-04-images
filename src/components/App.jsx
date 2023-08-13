@@ -22,6 +22,7 @@ const App = () => {
     setModalImg,
     total,
     setTotal,
+    closeModalEsc,
   } = useContext(Context);
 
   useEffect(() => {
@@ -50,19 +51,13 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, [closeModalEsc]);
+  }, []);
 
   const openModal = e => {
     setModalImg(e.target.title);
     setModal(true);
     window.addEventListener('keydown', closeModalEsc);
   };
-
-  function closeModalEsc(e) {
-    if (e.code === 'Escape') {
-      setModal(false);
-    }
-  }
 
   return (
     <>

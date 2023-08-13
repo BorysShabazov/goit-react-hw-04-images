@@ -49,6 +49,12 @@ export function GlobalContext({ children }) {
     });
   }
 
+  function closeModalEsc(e) {
+    if (e.code === 'Escape') {
+      return setModal(false);
+    }
+  }
+
   return (
     <Context.Provider
       value={{
@@ -69,6 +75,7 @@ export function GlobalContext({ children }) {
         closeModal,
         onSubmit,
         loadMore,
+        closeModalEsc,
       }}
     >
       {children}
