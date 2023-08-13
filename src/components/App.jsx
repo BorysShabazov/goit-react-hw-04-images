@@ -5,7 +5,7 @@ import api from 'api/api';
 import LoadMore from './LoadMore';
 import Loader from './Loader';
 import Modal from './Modal';
-import { useEffect, useContext, useCallback } from 'react';
+import { useEffect, useContext } from 'react';
 import { Context } from './context/stateContext';
 import { STATUS } from './context/stateContext';
 
@@ -44,13 +44,15 @@ const App = () => {
     }
 
     update();
-  }, [query, page]);
 
-  useEffect(() => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, []);
+  }, [query, page]);
+
+  // useEffect(() => {
+
+  // }, []);
 
   const openModal = e => {
     setModalImg(e.target.title);
