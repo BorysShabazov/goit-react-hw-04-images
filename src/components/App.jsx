@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import ImageGalleryItem from './ImageGalleryItem';
@@ -6,135 +5,124 @@ import api from 'api/api';
 import LoadMore from './LoadMore';
 import Loader from './Loader';
 import Modal from './Modal';
+import { useState, useEffect, useContext, useReducer } from 'react';
+import { Context } from './/context/stateContext';
+import { STATUS } from './/context/stateContext';
 
-const STATUS = {
-  IDLE: 'idle',
-  PENDING: 'pending',
-  RESOLVED: 'resolved',
-  REJECTED: 'rejected',
-};
+const App = () => {
+  const {
+    images,
+    setImages,
+    page,
+    setPage,
+    query,
+    setQuery,
+    status,
+    setStatus,
+    modal,
+    setModal,
+    modalImg,
+    setModalImg,
+    total,
+    setTotal,
+  } = useContext(Context);
 
-export default class App extends Component {
-  state = {
-    images: [],
-    page: 1,
-    query: '',
-    status: STATUS.IDLE,
-    modal: false,
-    modalImg: '',
-    total: 0,
-  };
+  useEffect(() => {
+    if (!query) {
+      return;
+    }
 
-  async componentDidUpdate(_, prevState) {
-    if (prevState.query !== this.state.query && this.state.query) {
+    async function update() {
       try {
-        await this.setState({ page: 1, images: [], total: 0 });
+        const { data } = await api(query, page);
 
-        const { data } = await api(this.state.query, this.state.page);
-        this.setState({
-          page: 1,
-          images: data.hits,
-          status: STATUS.RESOLVED,
-          total: data.total,
+        setImages(prevState => {
+          return [...prevState, ...data.hits];
         });
+        setTotal(data.total);
+        setStatus(STATUS.RESOLVED);
       } catch {
-        this.setState({ status: STATUS.REJECTED });
+        setStatus(STATUS.REJECTED);
       }
     }
 
-    if (prevState.page < this.state.page) {
-      const { data } = await api(this.state.query, this.state.page);
+    update();
+  }, [query, page]);
 
-      if (prevState.query !== this.state.query) {
-        this.setState({ images: data.hits });
-        return;
-      }
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('keydown', closeModalEsc);
+    };
+  }, []);
 
-      this.setState({
-        images: [...prevState.images, ...data.hits],
-        status: STATUS.RESOLVED,
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeModalEsc);
-  }
-
-  onSubmit = async evt => {
+  const onSubmit = async evt => {
     evt.preventDefault();
 
-    this.setState({ status: STATUS.PENDING });
+    setImages([]);
+    setPage(1);
+    setStatus(STATUS.PENDING);
 
     if (!evt.target.elements.search.value) {
-      this.setState({ status: STATUS.REJECTED });
+      setStatus(STATUS.REJECTED);
     }
 
-    await this.setState({ query: evt.target.elements.search.value });
+    await setQuery(evt.target.elements.search.value);
 
     evt.target.elements.search.value = '';
   };
 
-  loadMore = () => {
-    this.setState({ status: STATUS.PENDING });
+  const loadMore = () => {
+    setStatus(STATUS.PENDING);
 
-    this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-      };
+    setPage(prevState => {
+      return prevState + 1;
     });
   };
 
-  openModal = e => {
-    this.setState({ modalImg: e.target.title });
-    this.setState({ modal: true });
-    window.addEventListener('keydown', this.closeModalEsc);
+  const openModal = e => {
+    setModalImg(e.target.title);
+    setModal(true);
+    window.addEventListener('keydown', closeModalEsc);
   };
 
-  closeModalEsc = e => {
+  function closeModalEsc(e) {
     if (e.code === 'Escape') {
-      this.setState({ modal: false });
+      setModal(false);
     }
-  };
-
-  closeModal = e => {
-    if (e.currentTarget === e.target) {
-      this.setState({ modal: false });
-    }
-  };
-
-  render() {
-    return (
-      <>
-        <Searchbar onSubmit={this.onSubmit} />
-        {this.state.status === STATUS.REJECTED && (
-          <p>Fill in the search field...</p>
-        )}
-
-        <ImageGallery>
-          {this.state.images.map(({ id, webformatURL, largeImageURL, tag }) => {
-            return (
-              <ImageGalleryItem
-                key={id}
-                webformatURL={webformatURL}
-                largeImageURL={largeImageURL}
-                openModal={this.openModal}
-                tag={tag}
-              />
-            );
-          })}
-        </ImageGallery>
-
-        {this.state.modal && (
-          <Modal url={this.state.modalImg} closeModal={this.closeModal} />
-        )}
-        {this.state.status === STATUS.PENDING && <Loader />}
-
-        {this.state.images.length > 0 &&
-          this.state.images.length < this.state.total && (
-            <LoadMore loadMore={this.loadMore} />
-          )}
-      </>
-    );
   }
-}
+
+  const closeModal = e => {
+    if (e.currentTarget === e.target) {
+      setModal(false);
+    }
+  };
+
+  return (
+    <>
+      <Searchbar onSubmit={onSubmit} />
+      {status === STATUS.REJECTED && <p>Fill in the search field...</p>}
+
+      <ImageGallery>
+        {images.map(({ id, webformatURL, largeImageURL, tag }) => {
+          return (
+            <ImageGalleryItem
+              key={id}
+              webformatURL={webformatURL}
+              largeImageURL={largeImageURL}
+              openModal={openModal}
+              tag={tag}
+            />
+          );
+        })}
+      </ImageGallery>
+
+      {modal && <Modal url={modalImg} closeModal={closeModal} />}
+      {status === STATUS.PENDING && <Loader />}
+      {images.length > 0 && images.length < total && (
+        <LoadMore loadMore={loadMore} />
+      )}
+    </>
+  );
+};
+
+export default App;
