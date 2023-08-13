@@ -5,23 +5,20 @@ import api from 'api/api';
 import LoadMore from './LoadMore';
 import Loader from './Loader';
 import Modal from './Modal';
-import { useEffect, useContext, useReducer } from 'react';
-import { Context } from './/context/stateContext';
-import { STATUS } from './/context/stateContext';
+import { useEffect, useContext } from 'react';
+import { Context } from './context/stateContext';
+import { STATUS } from './context/stateContext';
 
 const App = () => {
   const {
     images,
     setImages,
     page,
-    setPage,
     query,
-    setQuery,
     status,
     setStatus,
     modal,
     setModal,
-    modalImg,
     setModalImg,
     total,
     setTotal,
@@ -55,30 +52,6 @@ const App = () => {
     };
   }, []);
 
-  const onSubmit = async evt => {
-    evt.preventDefault();
-
-    setImages([]);
-    setPage(1);
-    setStatus(STATUS.PENDING);
-
-    if (!evt.target.elements.search.value) {
-      setStatus(STATUS.REJECTED);
-    }
-
-    await setQuery(evt.target.elements.search.value);
-
-    evt.target.elements.search.value = '';
-  };
-
-  const loadMore = () => {
-    setStatus(STATUS.PENDING);
-
-    setPage(prevState => {
-      return prevState + 1;
-    });
-  };
-
   const openModal = e => {
     setModalImg(e.target.title);
     setModal(true);
@@ -91,15 +64,9 @@ const App = () => {
     }
   }
 
-  const closeModal = e => {
-    if (e.currentTarget === e.target) {
-      setModal(false);
-    }
-  };
-
   return (
     <>
-      <Searchbar onSubmit={onSubmit} />
+      <Searchbar />
       {status === STATUS.REJECTED && <p>Fill in the search field...</p>}
 
       <ImageGallery>
@@ -116,11 +83,9 @@ const App = () => {
         })}
       </ImageGallery>
 
-      {modal && <Modal url={modalImg} closeModal={closeModal} />}
+      {modal && <Modal />}
       {status === STATUS.PENDING && <Loader />}
-      {images.length > 0 && images.length < total && (
-        <LoadMore loadMore={loadMore} />
-      )}
+      {images.length > 0 && images.length < total && <LoadMore />}
     </>
   );
 };

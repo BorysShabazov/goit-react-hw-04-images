@@ -1,6 +1,10 @@
 import styles from './Searchbar.module.css';
+import { Context } from '../context/stateContext';
+import { useContext } from 'react';
 
-const Searchbar = ({ onSubmit }) => {
+const Searchbar = () => {
+  const { onSubmit } = useContext(Context);
+
   return (
     <header className={styles.searchbar}>
       <form className={styles.form} onSubmit={onSubmit}>
