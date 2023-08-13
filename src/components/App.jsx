@@ -58,11 +58,11 @@ const App = () => {
     window.addEventListener('keydown', closeModalEsc);
   };
 
-  const closeModalEsc = e => {
+  function closeModalEsc(e) {
     if (e.code === 'Escape') {
       setModal(false);
     }
-  };
+  }
 
   return (
     <>
