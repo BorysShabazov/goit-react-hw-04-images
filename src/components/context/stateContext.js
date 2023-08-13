@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export const Context = createContext();
 
@@ -49,11 +49,11 @@ export function GlobalContext({ children }) {
     });
   }
 
-  function closeModalEsc(e) {
+  const closeModalEsc = useCallback(e => {
     if (e.code === 'Escape') {
       return setModal(false);
     }
-  }
+  }, []);
 
   return (
     <Context.Provider
