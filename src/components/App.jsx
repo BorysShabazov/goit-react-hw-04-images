@@ -5,7 +5,7 @@ import api from 'api/api';
 import LoadMore from './LoadMore';
 import Loader from './Loader';
 import Modal from './Modal';
-import { useState, useEffect, useContext, useReducer } from 'react';
+import { useEffect, useContext, useReducer } from 'react';
 import { Context } from './/context/stateContext';
 import { STATUS } from './/context/stateContext';
 
