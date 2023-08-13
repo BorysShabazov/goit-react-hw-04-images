@@ -5,7 +5,7 @@ import api from 'api/api';
 import LoadMore from './LoadMore';
 import Loader from './Loader';
 import Modal from './Modal';
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useCallback } from 'react';
 import { Context } from './context/stateContext';
 import { STATUS } from './context/stateContext';
 
@@ -52,17 +52,17 @@ const App = () => {
     };
   }, []);
 
-  const openModal = e => {
+  const openModal = useCallback(e => {
     setModalImg(e.target.title);
     setModal(true);
     window.addEventListener('keydown', closeModalEsc);
-  };
+  });
 
-  function closeModalEsc(e) {
+  const closeModalEsc = useCallback(e => {
     if (e.code === 'Escape') {
       setModal(false);
     }
-  }
+  });
 
   return (
     <>
