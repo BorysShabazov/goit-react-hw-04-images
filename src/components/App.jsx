@@ -44,11 +44,13 @@ const App = () => {
     }
 
     update();
+  }, [query, page, setImages, setTotal, setStatus]);
 
+  useEffect(() => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, [query, page, setImages, setTotal, setStatus]);
+  }, [closeModalEsc]);
 
   const openModal = e => {
     setModalImg(e.target.title);
