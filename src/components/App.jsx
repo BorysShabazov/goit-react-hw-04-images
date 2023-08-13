@@ -52,17 +52,17 @@ const App = () => {
     };
   }, []);
 
-  const openModal = useCallback(e => {
+  const openModal = e => {
     setModalImg(e.target.title);
     setModal(true);
     window.addEventListener('keydown', closeModalEsc);
-  });
+  };
 
   const closeModalEsc = useCallback(e => {
     if (e.code === 'Escape') {
       setModal(false);
     }
-  });
+  }, []);
 
   return (
     <>
