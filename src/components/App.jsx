@@ -51,7 +51,7 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, []);
+  }, [closeModalEsc]);
 
   const openModal = e => {
     setModalImg(e.target.title);
