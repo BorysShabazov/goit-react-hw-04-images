@@ -48,11 +48,7 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', closeModalEsc);
     };
-  }, [query, page, setImages, setTotal, setStatus, closeModalEsc]);
-
-  // useEffect(() => {
-
-  // }, []);
+  }, [query, page, setImages, setTotal, setStatus]);
 
   const openModal = e => {
     setModalImg(e.target.title);
