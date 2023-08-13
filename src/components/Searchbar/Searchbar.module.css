@@ -1,0 +1,21 @@
+.searchbar {
+  background-color: indigo;
+  display: flex;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  height: 40px;
+  gap: 20px;
+}
+
+.input {
+  border-radius: 5px;
+}
+
+.button {
+  background-color: chocolate;
+}
